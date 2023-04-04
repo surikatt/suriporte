@@ -1,0 +1,12 @@
+{
+	"folders": [
+		{
+			"name": "serial:/COM19",
+			"uri": "serial://com19/flash"
+		},
+		{
+			"name": "test_wypi",
+			"path": "."
+		}
+	]
+}
