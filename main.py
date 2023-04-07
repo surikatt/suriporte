@@ -1,5 +1,7 @@
 from pycoproc_1 import Pycoproc
 from MFRC630 import MFRC630
+import machine
+
 import time
 import pycom
 
@@ -14,6 +16,8 @@ RGB_RED = (RGB_BRIGHTNESS << 16)
 RGB_GREEN = (RGB_BRIGHTNESS << 8)
 RGB_BLUE = (RGB_BRIGHTNESS)
 
+pin = machine.Pin('P9', mode=machine.Pin.IN)
+
 def check_uid(uid, len):
     return VALID_CARDS.count(uid[:len])
 
@@ -22,6 +26,11 @@ pycom.heartbeat(False)
 nfc.mfrc630_cmd_init()
 
 while True:
+
+    state = pin.value()
+    print("L'état de la broche P21 est:", state)
+    time.sleep(0.1)
+
     atqa = nfc.mfrc630_iso14443a_WUPA_REQA(nfc.MFRC630_ISO14443_CMD_REQA)
 
     if (atqa != 0):
