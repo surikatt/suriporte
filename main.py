@@ -38,8 +38,8 @@ nfc.mfrc630_cmd_init()
 while True:
     state = pin.value()
     if state != prev_state:
-        print("L'état de la broche P9 est:", state)
-        client.publish(topic="contacteur-1", msg=str(state))
+        #print("L'état de la broche P9 est:", state)
+        client.publish(topic="contacteur:1", msg=str(state))
         prev_state = state
     
     atqa = nfc.mfrc630_iso14443a_WUPA_REQA(nfc.MFRC630_ISO14443_CMD_REQA)
@@ -49,8 +49,8 @@ while True:
         uid_len = nfc.mfrc630_iso14443a_select(uid)
 
         if (uid_len > 0):
-            print("ID de la carte:", nfc.format_block(uid, uid_len))
-            client.publish(topic="id-carte", msg=str(nfc.format_block(uid, uid_len)))
+            #print("ID de la carte:", nfc.format_block(uid, uid_len))
+            client.publish(topic="idcarte:1*", msg=str(nfc.format_block(uid, uid_len)))
 
             if (check_uid(list(uid), uid_len)) > 0:
                 pycom.rgbled(RGB_GREEN)
@@ -63,5 +63,5 @@ while True:
     nfc.mfrc630_cmd_reset()
     time.sleep(.5)
     nfc.mfrc630_cmd_init()
-    client.check_msg()
+    #client.check_msg()
     time.sleep(0.1)
