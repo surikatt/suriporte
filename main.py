@@ -1,22 +1,23 @@
 from mqtt import MQTTClient
-# from mqtt import MQTTClient_lib as MQTTClient
 from network import WLAN
-import machine
-import time
 from pycoproc_1 import Pycoproc
 from MFRC630 import MFRC630
-import pycom
 
-VALID_CARDS = [[0x9E, 0x56, 0xBF, 0x29]]
+import pycom
+import machine
+import time
+
+rtc = RTC()
+rtc.ntp_sync("pool.ntp.org",360)
+while not rtc.synced():
+    time.sleep_ms(50)
+print(rtc.now())
 
 py = Pycoproc(Pycoproc.PYSCAN)
 nfc = MFRC630(py)
 
 pin = machine.Pin('P9', mode=machine.Pin.IN)
 prev_state = None
-
-def check_uid(uid, len):
-    return VALID_CARDS.count(uid[:len])
 
 def sub_cb(topic, msg):
    print(msg)
@@ -29,8 +30,16 @@ client.connect()
 pycom.heartbeat(False)
 nfc.mfrc630_cmd_init()
 
+start = time.ticks_ms()
+
 while True:
     state = pin.value()
+    temps_actuel = time.ticks_ms()
+
+    if time.ticks_diff(temps_actuel, start) > 60000:
+        client.publish(topic="ping:1", msg="ok", qos=1)
+        start = temps_actuel
+
     if state != prev_state:
         #print("L'état de la broche P9 est:", state)
         client.publish(topic="contacteur:1", msg=str(state), qos=1)
@@ -45,9 +54,4 @@ while True:
         if (uid_len > 0):
             #print("ID de la carte:", nfc.format_block(uid, uid_len))
             client.publish(topic="idcarte:1", msg=str(nfc.format_block(uid, uid_len)), qos=1)
-*
-    nfc.mfrc630_cmd_reset()
-    time.sleep(.5)
-    nfc.mfrc630_cmd_init()
-    #client.check_msg()
-    time.sleep(0.1)
+        
