@@ -12,12 +12,6 @@ VALID_CARDS = [[0x9E, 0x56, 0xBF, 0x29]]
 py = Pycoproc(Pycoproc.PYSCAN)
 nfc = MFRC630(py)
 
-RGB_BRIGHTNESS = 0x8
-
-RGB_RED = (RGB_BRIGHTNESS << 16)
-RGB_GREEN = (RGB_BRIGHTNESS << 8)
-RGB_BLUE = (RGB_BRIGHTNESS)
-
 pin = machine.Pin('P9', mode=machine.Pin.IN)
 prev_state = None
 
@@ -39,7 +33,7 @@ while True:
     state = pin.value()
     if state != prev_state:
         #print("L'état de la broche P9 est:", state)
-        client.publish(topic="contacteur:1", msg=str(state))
+        client.publish(topic="contacteur:1", msg=str(state), qos=1)
         prev_state = state
     
     atqa = nfc.mfrc630_iso14443a_WUPA_REQA(nfc.MFRC630_ISO14443_CMD_REQA)
@@ -50,16 +44,8 @@ while True:
 
         if (uid_len > 0):
             #print("ID de la carte:", nfc.format_block(uid, uid_len))
-            client.publish(topic="idcarte:1*", msg=str(nfc.format_block(uid, uid_len)))
-
-            if (check_uid(list(uid), uid_len)) > 0:
-                pycom.rgbled(RGB_GREEN)
-
-            else:
-                pycom.rgbled(RGB_RED)
-
-    else:
-        pycom.rgbled(RGB_BLUE)
+            client.publish(topic="idcarte:1", msg=str(nfc.format_block(uid, uid_len)), qos=1)
+*
     nfc.mfrc630_cmd_reset()
     time.sleep(.5)
     nfc.mfrc630_cmd_init()
