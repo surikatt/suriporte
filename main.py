@@ -2,6 +2,7 @@ from mqtt import MQTTClient
 from network import WLAN
 from pycoproc_1 import Pycoproc
 from MFRC630 import MFRC630
+from machine import RTC
 
 import pycom
 import machine
