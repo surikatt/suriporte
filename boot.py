@@ -5,10 +5,11 @@ import machine
 import time
 
 wlan = WLAN(mode=WLAN.STA)
-
 wlan.connect(ssid='Projet')
+
 while not wlan.isconnected():
-    machine.idle()
+    print("Error not connected")
+    
 print("WiFi connected succesfully")
 print(wlan.ifconfig())
 
