@@ -12,7 +12,6 @@ rtc = RTC()
 rtc.ntp_sync("pool.ntp.org",360)
 while not rtc.synced():
     time.sleep_ms(50)
-print(rtc.now())
 
 py = Pycoproc(Pycoproc.PYSCAN)
 nfc = MFRC630(py)
