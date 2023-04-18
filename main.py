@@ -7,11 +7,21 @@ from machine import RTC
 import pycom
 import machine
 import time
+print("hello")
+
+pycom.heartbeat(False)
+
+RGB_BRIGHTNESS = 0x8
+
+RGB_BLUE = (RGB_BRIGHTNESS)
+
+pycom.rgbled(RGB_BLUE)
 
 rtc = RTC()
 rtc.ntp_sync("pool.ntp.org",360)
 while not rtc.synced():
     time.sleep_ms(50)
+
 
 py = Pycoproc(Pycoproc.PYSCAN)
 nfc = MFRC630(py)
@@ -27,7 +37,6 @@ client = MQTTClient("porte", "172.16.28.48", user="", password="", port=1883)
 client.set_callback(sub_cb)
 client.connect()
 
-pycom.heartbeat(False)
 nfc.mfrc630_cmd_init()
 
 start = time.ticks_ms()
