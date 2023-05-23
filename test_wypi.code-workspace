@@ -1,0 +1,12 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"name": "serial:/COM19",
+			"uri": "serial://com19/flash"
+		}
+	],
+	"settings": {}
+}

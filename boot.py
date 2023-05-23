@@ -63,9 +63,6 @@ nfc.mfrc630_cmd_init()
 
 start = time.ticks_ms()
 
-carte_here = []
-presente = False
-
 while True:
     state = pin.value()
     temps_actuel = time.ticks_ms()
@@ -81,20 +78,10 @@ while True:
     
     atqa = nfc.mfrc630_iso14443a_WUPA_REQA(nfc.MFRC630_ISO14443_CMD_REQA)
 
-    carte_here.insert(0, atqa)
-    carte_here = carte_here[0:2]
-    print(carte_here, atqa)
-
-    if carte_here == [0, 0]:
-        presente = False
-
-    if (atqa != 0) and carte_here == [2, 0] and not presente:
-        presente = True
+    if (atqa != 0):
         uid = bytearray(10)
         uid_len = nfc.mfrc630_iso14443a_select(uid)
-        carte = nfc.format_block(uid, uid_len)
 
         if (uid_len > 0):
             #print("ID de la carte:", nfc.format_block(uid, uid_len))
             client.publish(topic="idcarte:1", msg=str(nfc.format_block(uid, uid_len)), qos=1)
-            prev_carte = nfc.format_block(uid, uid_len)
